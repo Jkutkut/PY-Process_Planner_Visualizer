@@ -12,7 +12,7 @@ if __name__ == "__main__":
         Process("P4", t_arrival = 3, t_cpu = 5),
         Process("P5", t_arrival = 3, t_cpu = 4),
         Process("P6", t_arrival = 4, t_cpu = 3),
-        Process("P7", t_arrival = 5, t_cpu = 2),
+        Process("P7", t_arrival = 5, t_cpu = 1),
     ]
 
     visualizer = ProcessPlanifierVisualizer(ps, FCFS, FCFS.BY_TIME)

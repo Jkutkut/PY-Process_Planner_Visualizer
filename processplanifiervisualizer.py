@@ -14,6 +14,8 @@ class ProcessPlanifierVisualizer:
         '\033[0;37m'  # White
     ]
 
+    DX = 5
+
     def __init__(self, processes: list, simulator: ProcessPlanifierSimulator, *modifiers):
         self.ps = processes
         if len(self.ps) == 0:
@@ -31,14 +33,14 @@ class ProcessPlanifierVisualizer:
 
         s = f"{s}\nTime queue:\n"
         for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:4}'
-            s = f'{s}  Normalized: {p.t_queue_normalized:4.3f}\n'
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:3}'
+            s = f'{s}  Normalized: {p.t_queue_normalized:3.3f}\n'
         s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}\n"
 
 
         s = f"{s}\nTime wait:\n"
         for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:4.3f}\n'
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:3.3f}\n'
         s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}\n"
 
         return s
@@ -60,29 +62,26 @@ class ProcessPlanifierVisualizer:
             } for i in range(len(self.ps))
         ]
 
+        legend = ["" for _ in range(0, t)]
         for id, p in enumerate(self.ps):
             c = p.t_cpu
             for h in p.history:
-                start = h["start"]
-                end = h["end"]
-                for i in range(start, end):
+                name = p.name.center(self.DX)
+                for i in range(h["start"], h["end"]):
                     plots[id]["values"][i] = c
+                    legend[i] = f"{self.colorize_txt(id, name)}"
                     c -= 1
 
-        s = AsciiGraph.plot(
+        graph = AsciiGraph.plot(
             plots,
             timeline,
-            dx=3,
+            dx=self.DX,
             dy=1,
             min_value_overlap_axis=True,
             hide_horizontal_axis=False,
         )
-        s = f"{s}\nLegend:\n"
-        legend = []
-        for id, p in enumerate(self.ps):
-            legend.append(self.colorize_txt(id, p.name))
-        s = f"{s}  {' '.join(legend)}\n"
-        return s
+        graph = f"{graph}\n       {''.join(legend)}\n"
+        return graph
 
     def represent_cpu_ownership(self) -> str:
         return "" # TODO
