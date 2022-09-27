@@ -114,27 +114,22 @@ class Process:
         return self.t_cpu - self.t_elapsed
 
 if __name__ == '__main__':
-    # p1 = Process("p1", 0, 8)
-    # p2 = Process("p2", 1, 4)
-    # p3 = Process("p3", 2, 9)
-    # p4 = Process("p4", 3, 5)
-    # p5 = Process("p5", 12, 2)
-    p1 = Process("p1", t_arrival=0, t_cpu=8)
-    p2 = Process("p2", t_arrival=1, t_cpu=4)
-    p3 = Process("p3", t_arrival=2, t_cpu=9)
-    p4 = Process("p4", t_arrival=3, t_cpu=5)
-    p5 = Process("p5", t_arrival=12, t_cpu=2)
-
-    ps = [p1, p2, p3, p4, p5]
+    ps = [
+        Process("p1", t_arrival=0, t_cpu=8),
+        Process("p2", t_arrival=1, t_cpu=4),
+        Process("p3", t_arrival=2, t_cpu=9),
+        Process("p4", t_arrival=3, t_cpu=5),
+        Process("p5", t_arrival=12, t_cpu=2)
+    ]
 
     t = 0
-    t = p1.run_for(t, 1)
-    t = p2.run_for(t, 4)
-    t = p4.run_for(t, 5)
-    t = p1.run_for(t, 2)
-    t = p5.run_for(t, 2)
-    t = p1.run_for(t, 5)
-    t = p3.run_for(t, 9)
+    t = ps[1 - 1].run_for(t, 1)
+    t = ps[2 - 1].run_for(t, 4)
+    t = ps[4 - 1].run_for(t, 5)
+    t = ps[1 - 1].run_for(t, 2)
+    t = ps[5 - 1].run_for(t, 2)
+    t = ps[1 - 1].run_for(t, 5)
+    t = ps[3 - 1].run_for(t, 9)
 
     print(f'Elapsed time: {t}')
     print("Histories:")
@@ -157,3 +152,6 @@ if __name__ == '__main__':
     print("\nT wait:")
     for p in ps:
         print(f'{p.name}: {p.t_wait}')
+
+    print("\nAvg T queue:", Process.avg_t_queue(ps))
+    print("Avg T wait:", Process.avg_t_wait(ps))
