@@ -17,7 +17,7 @@ class Process:
             return self.run_for(current_time, self.t_remaining)
         self.__t_elapsed += t
         self.add2history(current_time, t)
-        return t
+        return current_time + t
 
     def add2history(self, current_time: int, t: int):
         self.__history.append({
@@ -66,8 +66,10 @@ class Process:
 
     @property
     def t_wait(self):
-        time_executed = sum([h["t"] for h in self.history])
-        return self.t_start - self.t_arrival - time_executed
+        if not self.ended:
+            return self.give_attr(self.UDF)
+        time_executed = sum([h["t"] for h in self.history[:-1]])
+        return self.history[-1]["start"] - self.t_arrival - time_executed
         # Time start last interval - time arrival -
         # time spent previously executing this process
 
