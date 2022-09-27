@@ -1,9 +1,6 @@
 class Process:
     UDF = -42
 
-    # TODO fix bug:
-    #  Time queued should be 0 for the first process
-
     def __init__(self, name: str, t_arrival: int = UDF, t_cpu: int = UDF, priority: int = UDF):
         self.__name = name
         self.__t_arrival = t_arrival
@@ -126,6 +123,16 @@ class Process:
         s = f'Process {self.name}\n'
         s = f'{s}  Arrived at {self.__t_arrival}\n'
         s = f'{s}  CPU time {self.__t_cpu}\n'
+        try:
+            start = self.t_start
+        except:
+            start = "Not started"
+        s = f'{s}  Started at {start}\n'
+        try:
+            end = self.t_end
+        except:
+            end = "Not ended"
+        s = f'{s}  Ended at {end}\n'
         s = f'{s}  Priority {self.__priority}\n'
         s = f'{s}  Time elapsed {self.t_elapsed}\n'
         s = f'{s}  Time remaining {self.t_remaining}\n'
