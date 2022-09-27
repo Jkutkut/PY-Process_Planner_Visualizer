@@ -1,0 +1,3 @@
+[submodule "AsciiGraph"]
+	path = AsciiGraph
+	url = git@github.com:Jkutkut/PY-AsciiGraph.git
