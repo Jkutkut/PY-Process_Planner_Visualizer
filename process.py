@@ -66,12 +66,16 @@ class Process:
 
     @property
     def t_wait(self):
+        '''
+        Time spent waiting in the queue.
+
+        t_wait = start time last interval - time arrival -
+        time spent previously executing this process
+        '''
         if not self.ended:
             return self.give_attr(self.UDF)
         time_executed = sum([h["t"] for h in self.history[:-1]])
         return self.history[-1]["start"] - self.t_arrival - time_executed
-        # Time start last interval - time arrival -
-        # time spent previously executing this process
 
     # CLASS GETTERS
 
