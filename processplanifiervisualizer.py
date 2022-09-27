@@ -23,26 +23,27 @@ class ProcessPlanifierVisualizer:
     def represent(self) -> str:
         if not self.simulation.ended:
             self.simulation.run()
-        s = ""
-        # TODO
+        # TODO add verbose mode
+        s = self.represent_processes()
 
-        # "\nT queue:")
-        # for p in ps:
-        #     f'{p.name}: {p.t_queue}')
+        s = f"{s}\nTime queue:\n"
+        for p in self.ps:
+            s = f'{s}  {p.name}: {p.t_queue:4}'
+            s = f'{s}  Normalized: {p.t_queue_normalized:4}\n'
+        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}\n"
 
-        # "\nT queue normalized:")
-        # for p in ps:
-        #     f'{p.name}: {p.t_queue_normalized}')
-        
-        # "\nT wait:")
-        # for p in ps:
-        #     f'{p.name}: {p.t_wait}')
 
-        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps)}\n"
-        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps)}\n"
+        s = f"{s}\nTime wait:\n"
+        for p in self.ps:
+            s = f'{s}  {p.name}: {p.t_wait:4}\n'
+        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}\n"
 
         return s
 
     def plot(self):
         print(self.represent())
+
+    def represent_processes(self) -> str:
+        # TODO
+        return ""
 
