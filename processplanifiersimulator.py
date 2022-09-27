@@ -30,23 +30,27 @@ class ProcessPlanifierSimulatior:
         if any([not process.ended for process in self.processes]):
             raise Exception("Not all processes have ended")
 
-class FCFS(ProcessPlanifierSimulation):
+class FCFS(ProcessPlanifierSimulatior):
+    def __init__(self, processes: list, plan_by):
+        super().__init__(processes, plan_by)
+
+    def run(self) -> int:
+        if self.ended:
+            return self.t
+        for process in self.queue:
+            self.t = process.run_for(self.t, process.t_cpu)
+        self.ended = True
+
+class SJF(ProcessPlanifierSimulatior):
     def __init__(self, processes: list):
-        super().__init__(processes)
+        super().__init__(processes, self.BY_TIME)
 
     def run(self):
         pass # TODO
 
-class SJF(ProcessPlanifierSimulation):
+class SRTF(ProcessPlanifierSimulatior):
     def __init__(self, processes: list):
-        super().__init__(processes)
-
-    def run(self):
-        pass # TODO
-
-class SRTF(ProcessPlanifierSimulation):
-    def __init__(self, processes: list):
-        super().__init__(processes)
+        super().__init__(processes, self.BY_TIME)
 
     def run(self):
         pass # TODO
