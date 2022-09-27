@@ -110,3 +110,48 @@ class Process:
     @property
     def t_remaining(self):
         return self.t_cpu - self.t_elapsed
+
+if __name__ == '__main__':
+    # p1 = Process("p1", 0, 8)
+    # p2 = Process("p2", 1, 4)
+    # p3 = Process("p3", 2, 9)
+    # p4 = Process("p4", 3, 5)
+    # p5 = Process("p5", 12, 2)
+    p1 = Process("p1", t_arrival=0, t_cpu=8)
+    p2 = Process("p2", t_arrival=1, t_cpu=4)
+    p3 = Process("p3", t_arrival=2, t_cpu=9)
+    p4 = Process("p4", t_arrival=3, t_cpu=5)
+    p5 = Process("p5", t_arrival=12, t_cpu=2)
+
+    ps = [p1, p2, p3, p4, p5]
+
+    t = 0
+    t = p1.run_for(t, 1)
+    t = p2.run_for(t, 4)
+    t = p4.run_for(t, 5)
+    t = p1.run_for(t, 2)
+    t = p5.run_for(t, 2)
+    t = p1.run_for(t, 5)
+    t = p3.run_for(t, 9)
+
+    print(f'Elapsed time: {t}')
+    print("Histories:")
+    hist_p = lambda p: [f"{h['start']}-{h['t']}->{h['end']}" for h in p.history]
+    for p in ps:
+        print(f'{p.name}: {hist_p(p)}')
+
+    print("\nEnded processes:")
+    print(*[p.ended for p in ps], sep=" ", end="")
+    print(" => All ended:", all([p.ended for p in ps]))
+
+    print("\nT queue:")
+    for p in ps:
+        print(f'{p.name}: {p.t_queue}')
+
+    print("\nT queue normalized:")
+    for p in ps:
+        print(f'{p.name}: {p.t_queue_normalized}')
+    
+    print("\nT wait:")
+    for p in ps:
+        print(f'{p.name}: {p.t_wait}')
