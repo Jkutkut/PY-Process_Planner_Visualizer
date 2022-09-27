@@ -38,6 +38,8 @@ class FCFS(ProcessPlanifierSimulator):
         if self.ended:
             return self.t
         for process in self.queue:
+            if self.t < process.t_arrival:
+                self.t = process.t_arrival
             self.t = process.run_for(self.t, process.t_cpu)
         self.ended = True
 

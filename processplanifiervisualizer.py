@@ -28,6 +28,7 @@ class ProcessPlanifierVisualizer:
         if not self.simulation.ended:
             self.simulation.run()
         # TODO add verbose mode
+        # TODO add table with all the info
         s = self.represent_processes()
 
         s = f"{s}\nTime queue:\n"
@@ -61,7 +62,7 @@ class ProcessPlanifierVisualizer:
             } for i in range(len(self.ps))
         ]
 
-        legend = ["" for _ in range(0, t)]
+        legend = ["".center(self.DX) for _ in range(0, t)]
         for id, p in enumerate(self.ps):
             c = p.t_cpu
             for h in p.history:

@@ -2,7 +2,7 @@ class Process:
     UDF = -42
 
     # TODO fix bug:
-    #  If fist process starts on t > 0, the time wait is wrong
+    #  Time queued should be 0 for the first process
 
     def __init__(self, name: str, t_arrival: int = UDF, t_cpu: int = UDF, priority: int = UDF):
         self.__name = name
@@ -16,6 +16,8 @@ class Process:
     def run_for(self, current_time: int, t: int) -> int:
         if self.ended:
             raise Exception('Process already ended')
+        if current_time < self.t_arrival:
+            raise Exception(f'Process not arrived yet -> t: {t}\n{self}')
         if self.t_remaining < t:
             return self.run_for(current_time, self.t_remaining)
         self.__t_elapsed += t
@@ -119,6 +121,19 @@ class Process:
     @property
     def t_remaining(self):
         return self.t_cpu - self.t_elapsed
+
+    def __str__(self):
+        s = f'Process {self.name}\n'
+        s = f'{s}  Arrived at {self.__t_arrival}\n'
+        s = f'{s}  CPU time {self.__t_cpu}\n'
+        s = f'{s}  Priority {self.__priority}\n'
+        s = f'{s}  Time elapsed {self.t_elapsed}\n'
+        s = f'{s}  Time remaining {self.t_remaining}\n'
+        s = f'{s}  Has ended {self.ended}\n'
+        s = f'{s}  History {self.history}\n'
+        return s
+
+
 
 if __name__ == '__main__':
     ps = [
