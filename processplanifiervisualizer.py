@@ -1,3 +1,6 @@
+from AsciiGraph import *
+
+from process import Process
 from processplanifiersimulator import *
 
 class ProcessPlanifierVisualizer:
@@ -11,8 +14,35 @@ class ProcessPlanifierVisualizer:
         '\033[0;37m'  # White
     }
 
-    def __init__(self, processes: list):
-        self.processes = processes
-        self.simulation = None
+    def __init__(self, processes: list, simulator: ProcessPlanifierSimulator, *modifiers):
+        self.ps = processes
+        if len(self.ps) > len(self.COLORS):
+            raise Exception("Too many processes") # TODO allow inf processes
+        self.simulation = simulator(self.ps, *modifiers)
+
+    def represent(self) -> str:
+        if not self.simulation.ended:
+            self.simulation.run()
+        s = ""
         # TODO
+
+        # "\nT queue:")
+        # for p in ps:
+        #     f'{p.name}: {p.t_queue}')
+
+        # "\nT queue normalized:")
+        # for p in ps:
+        #     f'{p.name}: {p.t_queue_normalized}')
+        
+        # "\nT wait:")
+        # for p in ps:
+        #     f'{p.name}: {p.t_wait}')
+
+        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps)}\n"
+        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps)}\n"
+
+        return s
+
+    def plot(self):
+        print(self.represent())
 

@@ -1,4 +1,4 @@
-class ProcessPlanifierSimulatior:
+class ProcessPlanifierSimulator:
     BY_TIME = lambda p: p.t_arrival
     BY_PRIORITY = lambda p: p.priority
 
@@ -30,7 +30,7 @@ class ProcessPlanifierSimulatior:
         if any([not process.ended for process in self.processes]):
             raise Exception("Not all processes have ended")
 
-class FCFS(ProcessPlanifierSimulatior):
+class FCFS(ProcessPlanifierSimulator):
     def __init__(self, processes: list, plan_by):
         super().__init__(processes, plan_by)
 
@@ -41,21 +41,21 @@ class FCFS(ProcessPlanifierSimulatior):
             self.t = process.run_for(self.t, process.t_cpu)
         self.ended = True
 
-class SJF(ProcessPlanifierSimulatior):
+class SJF(ProcessPlanifierSimulator):
     def __init__(self, processes: list):
         super().__init__(processes, self.BY_TIME)
 
     def run(self):
         pass # TODO
 
-class SRTF(ProcessPlanifierSimulatior):
+class SRTF(ProcessPlanifierSimulator):
     def __init__(self, processes: list):
         super().__init__(processes, self.BY_TIME)
 
     def run(self):
         pass # TODO
 
-# class RR(ProcessPlanifierSimulatior):
+# class RR(ProcessPlanifierSimulator):
 #     def __init__(self, processes: list):
 #         super().__init__(processes) # TODO Check plan_by
 
