@@ -7,6 +7,7 @@ class Process:
         self.__t_cpu = t_cpu
         self.__priority = priority
 
+        self.__t_start = self.UDF
         self.__t_end = self.UDF
 
     @classmethod
@@ -47,19 +48,26 @@ class Process:
 
     @property
     def t_wait(self):
+        # return self.t_end - t_start 
         return self.UDF # TODO
 
     # CLASS GETTERS
 
     @classmethod
     def avg_t_queue(cls, processes: list):
-        return self.UDF # TODO
+        s = sum([p.t_queue for p in processes])
+        return s / len(processes)
 
     @classmethod
-    def avg_t_wait(cls):
-        return self.UDF # TODO
+    def avg_t_wait(cls, processes):
+        s = sum([p.t_wait for p in processes])
+        return s / len(processes)
 
     # NON CANONICAL
+
+    @property
+    def t_start(self):
+        return self.give_attr(self.__t_start)
 
     @property
     def t_end(self):
