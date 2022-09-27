@@ -19,3 +19,4 @@ if __name__ == "__main__":
     p = Process("P1")
     print(p)
     print(p.name)
+    print(p.t_arrival)

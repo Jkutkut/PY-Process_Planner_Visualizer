@@ -1,7 +1,15 @@
 class Process:
-    # TODO
-    def __init__(self, name: str):
+    UDF = -1
+
+    def __init__(self, name: str, t_arrival = UDF):
         self.__name = name
+        self.__t_arrival = t_arrival
+
+    @classmethod
+    def attr_defined(self, attr):
+        return attr == -1
+
+    # ************ GETTERS ************
 
     @property
     def name(self):
@@ -9,7 +17,7 @@ class Process:
 
     @property
     def t_arrival(self):
-        return None # TODO
+        return self.__t_arrival
 
     @property
     def t_cpu(self):
