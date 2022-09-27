@@ -9,6 +9,7 @@ class Process:
 
         self.__t_start = self.UDF
         self.__t_end = self.UDF
+        self.__history = []
 
     @classmethod
     def attr_defined(cls, *attrs):
@@ -38,9 +39,9 @@ class Process:
 
     @property
     def t_queue(self):
-        if not self.attr_defined(self.t_arrival, self.t_end)
+        if not self.attr_defined(self.t_arrival, self.t_end):
             return self.give_attr(self.UDF)
-        return self.give_attr(self.t_end - t_arrival)
+        return self.give_attr(self.t_end - self.t_arrival)
 
     @property
     def t_queue_normalized(self):
@@ -48,8 +49,10 @@ class Process:
 
     @property
     def t_wait(self):
-        # return self.t_end - t_start 
-        return self.UDF # TODO
+        return self.UDF
+        # TODO
+        # Time start last interval - time arrival -
+        # time spent previously executing this process
 
     # CLASS GETTERS
 
@@ -66,9 +69,9 @@ class Process:
     # NON CANONICAL
 
     @property
-    def t_start(self):
+    def t_start(self): # TODO refactor with history system
         return self.give_attr(self.__t_start)
 
     @property
-    def t_end(self):
+    def t_end(self): # TODO refactor with history system
         return self.give_attr(self.__t_end)
