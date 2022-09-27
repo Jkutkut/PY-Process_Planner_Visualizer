@@ -18,32 +18,37 @@ class ProcessPlanifierVisualizer:
         self.ps = processes
         if len(self.ps) == 0:
             raise Exception("Really? Empty array?")
+        if len(self.ps) > len(self.COLORS):
+            raise Exception("Too many processes")
         self.simulation = simulator(self.ps, *modifiers)
 
     def represent(self) -> str:
         if not self.simulation.ended:
             self.simulation.run()
         # TODO add verbose mode
-        # TODO add colors to processes' names
+        # TODO add units
         s = self.represent_processes()
-        s = s + self.represent_cpu_ownership()
 
         s = f"{s}\nTime queue:\n"
-        for p in self.ps:
-            s = f'{s}  {p.name}: {p.t_queue:4}'
-            s = f'{s}  Normalized: {p.t_queue_normalized:4}\n'
+        for id, p in enumerate(self.ps):
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:4}'
+            s = f'{s}  Normalized: {p.t_queue_normalized:4.3f}\n'
         s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}\n"
 
 
         s = f"{s}\nTime wait:\n"
-        for p in self.ps:
-            s = f'{s}  {p.name}: {p.t_wait:4}\n'
+        for id, p in enumerate(self.ps):
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:4.3f}\n'
         s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}\n"
 
         return s
 
     def plot(self):
         print(self.represent())
+
+    @classmethod
+    def colorize_txt(cls, color_id: int, txt: str) -> str:
+        return f"{cls.COLORS[color_id % len(cls.COLORS)]}{txt}\033[0m"
 
     def represent_processes(self) -> str:
         t = self.simulation.t
@@ -72,7 +77,11 @@ class ProcessPlanifierVisualizer:
             min_value_overlap_axis=True,
             hide_horizontal_axis=False,
         )
-        # TODO add legend
+        s = f"{s}\nLegend:\n"
+        legend = []
+        for id, p in enumerate(self.ps):
+            legend.append(self.colorize_txt(id, p.name))
+        s = f"{s}  {' '.join(legend)}\n"
         return s
 
     def represent_cpu_ownership(self) -> str:

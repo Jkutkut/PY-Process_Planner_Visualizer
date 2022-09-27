@@ -1,6 +1,9 @@
 class Process:
     UDF = -42
 
+    # TODO fix bug:
+    #  If fist process starts on t > 0, the time wait is wrong
+
     def __init__(self, name: str, t_arrival: int = UDF, t_cpu: int = UDF, priority: int = UDF):
         self.__name = name
         self.__t_arrival = t_arrival
