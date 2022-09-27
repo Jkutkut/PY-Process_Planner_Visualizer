@@ -13,5 +13,6 @@ class ProcessPlanifierVisualizer:
 
     def __init__(self, processes: list):
         self.processes = processes
-        self.simulation = 
+        self.simulation = None
+        # TODO
 
