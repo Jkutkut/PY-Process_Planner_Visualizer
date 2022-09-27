@@ -16,7 +16,11 @@ if __name__ == "__main__":
 
 
     # TODO
-    p = Process("P1")
+    p = Process(
+        "P1",
+        t_arrival = 0,
+        t_cpu = 2
+    )
     print(p)
     print(p.name)
     print(p.t_arrival)

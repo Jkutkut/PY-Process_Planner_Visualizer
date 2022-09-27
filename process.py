@@ -1,44 +1,66 @@
 class Process:
-    UDF = -1
+    UDF = -42
 
-    def __init__(self, name: str, t_arrival = UDF):
+    def __init__(self, name: str, t_arrival = UDF, t_cpu = UDF, priority = UDF):
         self.__name = name
         self.__t_arrival = t_arrival
+        self.__t_cpu = t_cpu
+        self.__priority = priority
+
+        self.__t_end = self.UDF
 
     @classmethod
-    def attr_defined(self, attr):
-        return attr == -1
+    def attr_defined(cls, *attrs):
+        return all([attr != cls.UDF for attr in attrs])
 
     # ************ GETTERS ************
 
+    @classmethod
+    def give_attr(cls, attr):
+        if not cls.attr_defined(attr):
+            raise Exception("This field is not defined")
+        return attr
+
+    # CANONICAL
+
     @property
     def name(self):
-        return self.__name
+        return self.give_attr(self.__name)
 
     @property
     def t_arrival(self):
-        return self.__t_arrival
+        return self.give_attr(self.__t_arrival)
 
     @property
     def t_cpu(self):
-        return None # TODO
+        return self.give_attr(self.__t_cpu)
 
     @property
     def t_queue(self):
-        return None # TODO
+        if not self.attr_defined(self.t_arrival, self.t_end)
+            return self.give_attr(self.UDF)
+        return self.give_attr(self.t_end - t_arrival)
 
     @property
     def t_queue_normalized(self):
-        return None # TODO
+        return self.t_queue / self.t_cpu
 
     @property
-    def t_e(self): # TODO find out the meaning
-        return None # TODO
+    def t_wait(self):
+        return self.UDF # TODO
+
+    # CLASS GETTERS
 
     @classmethod
     def avg_t_queue(cls, processes: list):
-        return None # TODO
+        return self.UDF # TODO
 
     @classmethod
-    def avg_t_e(cls): # TODO find out the meaning
-        return None # TODO
+    def avg_t_wait(cls):
+        return self.UDF # TODO
+
+    # NON CANONICAL
+
+    @property
+    def t_end(self):
+        return self.give_attr(self.__t_end)
