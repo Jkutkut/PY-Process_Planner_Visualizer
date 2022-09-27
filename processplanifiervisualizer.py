@@ -24,29 +24,28 @@ class ProcessPlanifierVisualizer:
             raise Exception("Too many processes")
         self.simulation = simulator(self.ps, *modifiers)
 
-    def represent(self) -> str:
+    def represent(self, unit="ns") -> str:
         if not self.simulation.ended:
             self.simulation.run()
         # TODO add verbose mode
-        # TODO add units
         s = self.represent_processes()
 
         s = f"{s}\nTime queue:\n"
         for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:3}'
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:3}{unit}'
             s = f'{s}  Normalized: {p.t_queue_normalized:3.3f}\n'
-        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}\n"
+        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
 
 
         s = f"{s}\nTime wait:\n"
         for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:3.3f}\n'
-        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}\n"
+            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:3.3f}{unit}\n'
+        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
 
         return s
 
-    def plot(self):
-        print(self.represent())
+    def plot(self, unit="ns"):
+        print(self.represent(unit=unit))
 
     @classmethod
     def colorize_txt(cls, color_id: int, txt: str) -> str:
