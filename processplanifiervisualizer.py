@@ -1,3 +1,5 @@
+from processplanifiersimulator import *
+
 class ProcessPlanifierVisualizer:
     COLORS = {
         '\033[0;31m', # Red
@@ -9,5 +11,7 @@ class ProcessPlanifierVisualizer:
         '\033[0;37m'  # White
     }
 
-    
+    def __init__(self, processes: list):
+        self.processes = processes
+        self.simulation = 
 
