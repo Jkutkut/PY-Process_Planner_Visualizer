@@ -4,7 +4,7 @@ from process import Process
 from processplanifiersimulator import *
 
 class ProcessPlanifierVisualizer:
-    COLORS = {
+    COLORS = [
         '\033[0;31m', # Red
         '\033[0;32m', # Green
         '\033[0;33m', # Yellow
@@ -12,19 +12,21 @@ class ProcessPlanifierVisualizer:
         '\033[0;35m', # Purple
         '\033[0;36m', # Cyan
         '\033[0;37m'  # White
-    }
+    ]
 
     def __init__(self, processes: list, simulator: ProcessPlanifierSimulator, *modifiers):
         self.ps = processes
-        if len(self.ps) > len(self.COLORS):
-            raise Exception("Too many processes") # TODO allow inf processes
+        if len(self.ps) == 0:
+            raise Exception("Really? Empty array?")
         self.simulation = simulator(self.ps, *modifiers)
 
     def represent(self) -> str:
         if not self.simulation.ended:
             self.simulation.run()
         # TODO add verbose mode
+        # TODO add colors to processes' names
         s = self.represent_processes()
+        s = s + self.represent_cpu_ownership()
 
         s = f"{s}\nTime queue:\n"
         for p in self.ps:
@@ -44,6 +46,35 @@ class ProcessPlanifierVisualizer:
         print(self.represent())
 
     def represent_processes(self) -> str:
-        # TODO
-        return ""
+        t = self.simulation.t
+        timeline = [i for i in range(0, t)]
+        plots = [
+            {
+                "values": [0 for _ in range(0, t)],
+                "color": self.COLORS[i % len(self.COLORS)]
+            } for i in range(len(self.ps))
+        ]
+
+        for id, p in enumerate(self.ps):
+            c = p.t_cpu
+            for h in p.history:
+                start = h["start"]
+                end = h["end"]
+                for i in range(start, end):
+                    plots[id]["values"][i] = c
+                    c -= 1
+
+        s = AsciiGraph.plot(
+            plots,
+            timeline,
+            dx=3,
+            dy=1,
+            min_value_overlap_axis=True,
+            hide_horizontal_axis=False,
+        )
+        # TODO add legend
+        return s
+
+    def represent_cpu_ownership(self) -> str:
+        return "" # TODO
 
