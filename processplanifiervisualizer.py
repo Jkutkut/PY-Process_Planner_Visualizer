@@ -5,6 +5,7 @@ from processplanifiersimulator import *
 
 class ProcessPlanifierVisualizer:
     COLORS = [
+        # TODO add more colors
         '\033[0;31m', # Red
         '\033[0;32m', # Green
         '\033[0;33m', # Yellow
@@ -27,7 +28,6 @@ class ProcessPlanifierVisualizer:
     def represent(self, verbose: bool = True, unit="ns") -> str:
         if not self.simulation.ended:
             self.simulation.run()
-        # TODO add table with all the info
         s = self.represent_processes()
 
         if verbose:
@@ -38,16 +38,25 @@ class ProcessPlanifierVisualizer:
             s += f"  t_wait = (last start time of process) - (t_cpu consumed previously) - t_arrival\n"
             s += f"  Avg t_wait: avg(t_wait) = sum(t_wait(n)) / n\n"
 
-        s = f"{s}\nTime queue:\n"
+        table = [
+            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "Tq", "Tq normalized", "t_wait"]]
+        ]
+
         for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_queue:3}{unit}'
-            s = f'{s}  Normalized: {p.t_queue_normalized:3.3f}\n'
+            name = self.colorize_txt(id, p.name.center(len(table[0][0])))
+            t_arrival = self.colorize_txt(id, f"{p.t_arrival}{unit}".center(len(table[0][1])))
+            t_cpu = self.colorize_txt(id, f"{p.t_cpu}{unit}".center(len(table[0][2])))
+            t_queue = self.colorize_txt(id, f"{p.t_queue}{unit}".center(len(table[0][3])))
+            t_queue_normalized = self.colorize_txt(id, f"{p.t_queue_normalized}".center(len(table[0][4])))
+            t_wait = self.colorize_txt(id, f"{p.t_wait}{unit}".center(len(table[0][5])))
+            
+            table.append([
+                name, t_arrival, t_cpu, t_queue, t_queue_normalized, t_wait
+            ])
+        table = '\n'.join([''.join(row) for row in table])
+        s += f"\n{table}\n"
+
         s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
-
-
-        s = f"{s}\nTime wait:\n"
-        for id, p in enumerate(self.ps):
-            s = f'{s}  {self.colorize_txt(id, p.name)}: {p.t_wait:3.3f}{unit}\n'
         s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
 
         return s
