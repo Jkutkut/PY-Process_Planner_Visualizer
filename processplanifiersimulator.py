@@ -84,13 +84,13 @@ class SJF(ProcessPlanifierSimulator):
             self.queue.remove(p)
         self.ended = True
 
-
 class SRTF(ProcessPlanifierSimulator):
     def __init__(self, processes: list):
         super().__init__(processes, self.BY_TIME)
 
     def run(self):
-        pass # TODO
+        # TODO
+        self.ended = True
 
 class SRJF(SRTF):
     pass

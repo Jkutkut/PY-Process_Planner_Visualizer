@@ -55,6 +55,8 @@ class ProcessPlanifierVisualizer:
         # TODO hide fields not defined
         if not self.simulation.ended:
             self.simulation.run()
+            if not self.simulation.ended:
+                raise Exception("The simulation did not end")
         s = self.represent_processes()
 
         if verbose:
