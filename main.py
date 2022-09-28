@@ -63,16 +63,17 @@ if __name__ == "__main__":
 
     visualizer = ProcessPlanifierVisualizer(ps_solution, SRJF)
     visualizer.simulation.t = t
+    visualizer.simulation.queue = []
     visualizer.plot(verbose=False)
 
     print("\n\n----------------------------------------\n\n")
 
     ps = [
-        Process("P1", t_arrival = 0, t_cpu = 8),
-        Process("P2", t_arrival = 1, t_cpu = 4),
-        Process("P3", t_arrival = 2, t_cpu = 9),
-        Process("P4", t_arrival = 3, t_cpu = 5),
-        Process("P5", t_arrival = 12, t_cpu = 2),
+        Process("P1", t_arrival = 1, t_cpu = 8),
+        Process("P2", t_arrival = 2, t_cpu = 4),
+        Process("P3", t_arrival = 3, t_cpu = 9),
+        Process("P4", t_arrival = 4, t_cpu = 5),
+        Process("P5", t_arrival = 13, t_cpu = 2),
     ]
 
     visualizer = ProcessPlanifierVisualizer(ps, SRJF)

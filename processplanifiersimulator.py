@@ -89,7 +89,25 @@ class SRTF(ProcessPlanifierSimulator):
         super().__init__(processes, self.BY_TIME)
 
     def run(self):
-        # TODO
+        remaining_ft = lambda p: p.t_remaining
+        while len(self.queue) > 0:
+            lst = self.avalible2run(self.t)
+            if len(lst) == 0:
+                self.t += 1
+                print(self.t)
+                continue
+            # Sortest Job Fist (SJF)
+            lst_s = sorted(lst, key = remaining_ft)
+            min_t_remaining = lst_s[0].t_remaining
+            if len(lst_s) > 1:
+                # Get all with t_remaining lowest
+                lst_s = list(filter(lambda p: p.t_remaining == min_t_remaining, lst_s))
+                if len(lst_s) > 1:
+                    lst_s = sorted(lst_s, key=SJF.BY_TIME_FT) # Apply FCFS (smallest t_arrival)
+            p = lst_s[0]
+            self.t = p.run_for(self.t, 1)
+            if p.ended:
+                self.queue.remove(p)
         self.ended = True
 
 class SRJF(SRTF):
