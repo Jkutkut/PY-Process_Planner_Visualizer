@@ -1,6 +1,6 @@
 class ProcessPlanifierSimulator:
     BY_TIME = lambda p: p.t_arrival
-    BY_PRIORITY = lambda p: p.priority
+    BY_PRIORITY = lambda p: p.priority # TODO test
 
     def __init__(self, processes: list, plan_by=BY_TIME):
         self.processes = processes

@@ -24,12 +24,19 @@ class ProcessPlanifierVisualizer:
             raise Exception("Too many processes")
         self.simulation = simulator(self.ps, *modifiers)
 
-    def represent(self, unit="ns") -> str:
+    def represent(self, verbose: bool = True, unit="ns") -> str:
         if not self.simulation.ended:
             self.simulation.run()
-        # TODO add verbose mode
         # TODO add table with all the info
         s = self.represent_processes()
+
+        if verbose:
+            s += f"\nFormulas:\n"
+            s += f"  Time queue: Tq = t_end - t_arrival\n"
+            s += f"  Tq normalized: normalize(Tq) = Tq / t_cpu\n"
+            s += f"  Avg Tq: avg(Tq) = sum(Tq(n)) / n\n\n"
+            s += f"  t_wait = (last start time of process) - (t_cpu consumed previously) - t_arrival\n"
+            s += f"  Avg t_wait: avg(t_wait) = sum(t_wait(n)) / n\n"
 
         s = f"{s}\nTime queue:\n"
         for id, p in enumerate(self.ps):
@@ -80,9 +87,6 @@ class ProcessPlanifierVisualizer:
             min_value_overlap_axis=True,
             hide_horizontal_axis=False,
         )
-        graph = f"{graph}\n       {''.join(legend)}\n"
+        graph = f"\n{graph}\n       {''.join(legend)}\n"
         return graph
-
-    def represent_cpu_ownership(self) -> str:
-        return "" # TODO
 
