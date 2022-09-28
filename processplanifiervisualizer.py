@@ -4,16 +4,13 @@ from process import Process
 from processplanifiersimulator import *
 
 class ProcessPlanifierVisualizer:
-    COLORS = [
-        # TODO add more colors
-        '\033[0;31m', # Red
-        '\033[0;32m', # Green
-        '\033[0;33m', # Yellow
-        '\033[0;34m', # Blue
-        '\033[0;35m', # Purple
-        '\033[0;36m', # Cyan
-        '\033[0;37m'  # White
-    ]
+    # Colors
+    MIN_COLOR_CODE = 0
+    # MAX_COLOR_CODE = 255
+    # MIN_COLOR_CODE = 105
+    MAX_COLOR_CODE = 231
+    NC = "\033[0m"
+    MAX_PROCESSES = MAX_COLOR_CODE - MIN_COLOR_CODE
 
     DX = 5
 
@@ -21,7 +18,7 @@ class ProcessPlanifierVisualizer:
         self.ps = processes
         if len(self.ps) == 0:
             raise Exception("Really? Empty array?")
-        if len(self.ps) > len(self.COLORS):
+        if len(self.ps) > self.MAX_PROCESSES:
             raise Exception("Too many processes")
         self.simulation = simulator(self.ps, *modifiers)
 
@@ -64,17 +61,13 @@ class ProcessPlanifierVisualizer:
     def plot(self, unit="ns"):
         print(self.represent(unit=unit))
 
-    @classmethod
-    def colorize_txt(cls, color_id: int, txt: str) -> str:
-        return f"{cls.COLORS[color_id % len(cls.COLORS)]}{txt}\033[0m"
-
     def represent_processes(self) -> str:
         t = self.simulation.t
         timeline = [i for i in range(0, t)]
         plots = [
             {
                 "values": [0 for _ in range(0, t)],
-                "color": self.COLORS[i % len(self.COLORS)]
+                "color": self.get_color(i)
             } for i in range(len(self.ps))
         ]
 
@@ -99,3 +92,15 @@ class ProcessPlanifierVisualizer:
         graph = f"\n{graph}\n       {''.join(legend)}\n"
         return graph
 
+    def colorize_txt(self, color_id: int, txt: str) -> str:
+        return f"{self.get_color(color_id)}{txt}{self.NC}"
+
+    def get_color(self, index: int):
+        if index % 2 == 0:
+            color = self.MAX_COLOR_CODE - index * 6
+        else:
+            color = self.MAX_COLOR_CODE - index * 6 - 5
+
+        if color < self.MIN_COLOR_CODE:
+            raise Exception("Color not defined")
+        return f"\033[38;5;{color}m"
