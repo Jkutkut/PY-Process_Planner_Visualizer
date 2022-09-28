@@ -35,8 +35,9 @@ if __name__ == "__main__":
 
     ps1 = [
         Process("P1", t_arrival = 0, t_cpu = 8),
-        Process("P2", t_arrival = 2, t_cpu = 3),
-        Process("P3", t_arrival = 3, t_cpu = 2),
+        Process("P2", t_arrival = 4, t_cpu = 3),
+        Process("P3", t_arrival = 5, t_cpu = 2),
+        Process("P4", t_arrival = 4, t_cpu = 2),
     ]
 
     visualizer = ProcessPlanifierVisualizer(ps1, SJF)

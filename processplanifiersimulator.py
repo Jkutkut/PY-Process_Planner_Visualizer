@@ -71,9 +71,15 @@ class SJF(ProcessPlanifierSimulator):
             if len(lst) == 0:
                 t += 1
                 continue
-            lsts = sorted(lst, key = remaining_ft)
-            # TODO Get all with t_cpu lowest and apply FCFS (smallest t_arrival)
-            p = lsts[0]
+            # Sortest Job Fist (SJF)
+            lst_s = sorted(lst, key = remaining_ft)
+            min_t_remaining = lst_s[0].t_remaining
+            if len(lst_s) > 1:
+                # Get all with t_remaining lowest
+                lst_s = list(filter(lambda p: p.t_remaining == min_t_remaining, lst_s))
+                if len(lst_s) > 1:
+                    lst_s = sorted(lst_s, key=SJF.BY_TIME_FT) # Apply FCFS (smallest t_arrival)
+            p = lst_s[0]
             self.t = p.run_for(self.t, p.t_cpu)
             self.queue.remove(p)
         self.ended = True
