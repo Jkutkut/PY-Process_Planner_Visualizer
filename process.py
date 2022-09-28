@@ -9,11 +9,12 @@ class Process:
 
         self.__history = []
         self.__t_elapsed = 0
+        self.protected = True
 
     def run_for(self, current_time: int, t: int) -> int:
         if self.ended:
             raise Exception('Process already ended')
-        if current_time < self.t_arrival:
+        if self.attr_defined(self.__t_arrival) and current_time < self.t_arrival:
             raise Exception(f'Process not arrived yet -> t: {t}\n{self}')
         if self.t_remaining < t:
             return self.run_for(current_time, self.t_remaining)
@@ -35,36 +36,36 @@ class Process:
     # ************ GETTERS ************
 
     @classmethod
-    def give_attr(cls, attr):
-        if not cls.attr_defined(attr):
-            raise Exception("This field is not defined")
+    def give_attr(cls, attr, protected = True):
+        if protected and not cls.attr_defined(attr):
+            raise Exception(f"This field is not defined: {attr}, protected: {protected}")
         return attr
 
     # CANONICAL
 
     @property
     def name(self):
-        return self.give_attr(self.__name)
+        return self.give_attr(self.__name, self.protected)
 
     @property
     def priority(self):
-        return self.give_attr(self.__priority)
+        return self.give_attr(self.__priority, self.protected)
 
     @property
     def t_arrival(self):
-        return self.give_attr(self.__t_arrival)
+        return self.give_attr(self.__t_arrival, self.protected)
 
     @property
     def t_cpu(self):
-        return self.give_attr(self.__t_cpu)
+        return self.give_attr(self.__t_cpu, self.protected)
 
     @property
     def t_queue(self):
-        return self.give_attr(self.t_end - self.t_arrival)
+        return self.give_attr(self.t_end - self.t_arrival, self.protected)
 
     @property
     def t_queue_normalized(self):
-        return self.give_attr(self.t_queue / self.t_cpu)
+        return self.give_attr(self.t_queue / self.t_cpu, self.protected)
 
     @property
     def t_wait(self):
@@ -75,7 +76,7 @@ class Process:
         time spent previously executing this process
         '''
         if not self.ended:
-            return self.give_attr(self.UDF)
+            return self.give_attr(self.UDF, self.protected)
         time_executed = sum([h["t"] for h in self.history[:-1]])
         return self.history[-1]["start"] - self.t_arrival - time_executed
 
@@ -100,12 +101,12 @@ class Process:
     @property
     def t_start(self):
         time = self.UDF if not self.ended else self.history[0]["start"]
-        return self.give_attr(time)
+        return self.give_attr(time, self.protected)
 
     @property
     def t_end(self):
         time = self.UDF if not self.ended else self.history[-1]["end"]
-        return self.give_attr(time)
+        return self.give_attr(time, self.protected)
 
     @property
     def ended(self) -> bool:
@@ -120,24 +121,20 @@ class Process:
         return self.t_cpu - self.t_elapsed
 
     def __str__(self):
+        self.protected = False
         s = f'Process {self.name}\n'
         s = f'{s}  Arrived at {self.__t_arrival}\n'
         s = f'{s}  CPU time {self.__t_cpu}\n'
-        try:
-            start = self.t_start
-        except:
-            start = "Not started"
+        start = self.t_start if start == self.UDF else 'not started'
         s = f'{s}  Started at {start}\n'
-        try:
-            end = self.t_end
-        except:
-            end = "Not ended"
+        end = self.t_end if end == self.UDF else 'not ended'
         s = f'{s}  Ended at {end}\n'
         s = f'{s}  Priority {self.__priority}\n'
         s = f'{s}  Time elapsed {self.t_elapsed}\n'
         s = f'{s}  Time remaining {self.t_remaining}\n'
         s = f'{s}  Has ended {self.ended}\n'
         s = f'{s}  History {self.history}\n'
+        self.protected = True
         return s
 
 
