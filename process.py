@@ -1,6 +1,6 @@
 class Process:
     UDF = -42
-
+    # TODO way to check if a field is defined
     def __init__(self, name: str, t_arrival: int = UDF, t_cpu: int = UDF, priority: int = UDF):
         self.__name = name
         self.__t_arrival = t_arrival
@@ -35,37 +35,36 @@ class Process:
 
     # ************ GETTERS ************
 
-    @classmethod
-    def give_attr(cls, attr, protected = True):
-        if protected and not cls.attr_defined(attr):
-            raise Exception(f"This field is not defined: {attr}, protected: {protected}")
+    def give_attr(self, attr):
+        if self.protected and not self.attr_defined(attr):
+            raise Exception(f"This field is not defined: {attr}, protected: {self.protected}")
         return attr
 
     # CANONICAL
 
     @property
     def name(self):
-        return self.give_attr(self.__name, self.protected)
+        return self.give_attr(self.__name)
 
     @property
     def priority(self):
-        return self.give_attr(self.__priority, self.protected)
+        return self.give_attr(self.__priority)
 
     @property
     def t_arrival(self):
-        return self.give_attr(self.__t_arrival, self.protected)
+        return self.give_attr(self.__t_arrival)
 
     @property
     def t_cpu(self):
-        return self.give_attr(self.__t_cpu, self.protected)
+        return self.give_attr(self.__t_cpu)
 
     @property
     def t_queue(self):
-        return self.give_attr(self.t_end - self.t_arrival, self.protected)
+        return self.give_attr(self.t_end - self.t_arrival)
 
     @property
     def t_queue_normalized(self):
-        return self.give_attr(self.t_queue / self.t_cpu, self.protected)
+        return self.give_attr(self.t_queue / self.t_cpu)
 
     @property
     def t_wait(self):
@@ -76,7 +75,7 @@ class Process:
         time spent previously executing this process
         '''
         if not self.ended:
-            return self.give_attr(self.UDF, self.protected)
+            return self.give_attr(self.UDF)
         time_executed = sum([h["t"] for h in self.history[:-1]])
         return self.history[-1]["start"] - self.t_arrival - time_executed
 
@@ -101,12 +100,12 @@ class Process:
     @property
     def t_start(self):
         time = self.UDF if not self.ended else self.history[0]["start"]
-        return self.give_attr(time, self.protected)
+        return self.give_attr(time)
 
     @property
     def t_end(self):
         time = self.UDF if not self.ended else self.history[-1]["end"]
-        return self.give_attr(time, self.protected)
+        return self.give_attr(time)
 
     @property
     def ended(self) -> bool:
