@@ -24,6 +24,16 @@ class ProcessPlanifierSimulator:
     def ended(self):
         return self.__ended
 
+    def avalible2run(self, t: int) -> list:
+        lst = []
+        for p in self.processes:
+            if p.ended:
+                continue
+            if p.t_arrival > t:
+                continue
+            lst.append(p)
+        return lst
+
     # ************ SETTERS ************
 
     @ended.setter
@@ -50,19 +60,34 @@ class FCFS(ProcessPlanifierSimulator):
             self.t = process.run_for(self.t, process.t_cpu)
         self.ended = True
 
-# class SJF(ProcessPlanifierSimulator):
-#     def __init__(self, processes: list):
-#         super().__init__(processes, self.BY_TIME)
+class SJF(ProcessPlanifierSimulator):
+    def __init__(self, processes: list):
+        super().__init__(processes, self.BY_TIME)
 
-#     def run(self):
-#         pass # TODO
+    def run(self):
+        remaining_ft = lambda p: p.t_remaining
+        while len(self.queue) > 0:
+            lst = self.avalible2run(self.t)
+            if len(lst) == 0:
+                t += 1
+                continue
+            lsts = sorted(lst, key = remaining_ft)
+            # TODO Get all with t_cpu lowest and apply FCFS (smallest t_arrival)
+            p = lsts[0]
+            self.t = p.run_for(self.t, p.t_cpu)
+            self.queue.remove(p)
+        self.ended = True
 
-# class SRTF(ProcessPlanifierSimulator):
-#     def __init__(self, processes: list):
-#         super().__init__(processes, self.BY_TIME)
 
-#     def run(self):
-#         pass # TODO
+class SRTF(ProcessPlanifierSimulator):
+    def __init__(self, processes: list):
+        super().__init__(processes, self.BY_TIME)
+
+    def run(self):
+        pass # TODO
+
+class SRJF(SRTF):
+    pass
 
 # class RR(ProcessPlanifierSimulator):
 #     def __init__(self, processes: list):
