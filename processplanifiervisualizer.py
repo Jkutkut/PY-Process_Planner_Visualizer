@@ -68,17 +68,19 @@ class ProcessPlanifierVisualizer:
         if all([p.priority == Process.UDF for p in self.ps]):
             table[0][-1] = ""
         for id, p in enumerate(self.ps):
-            name = self.colorize_txt(id, p.name.center(len(table[0][0])))
-            t_arrival = self.colorize_txt(id, f"{p.t_arrival}{unit}".center(len(table[0][1])))
-            t_cpu = self.colorize_txt(id, f"{p.t_cpu}{unit}".center(len(table[0][2])))
-            t_queue = self.colorize_txt(id, f"{p.t_queue}{unit}".center(len(table[0][3])))
-            t_queue_normalized = self.colorize_txt(id, f"{p.t_queue_normalized:.3f}".center(len(table[0][4])))
-            t_wait = self.colorize_txt(id, f"{p.t_wait}{unit}".center(len(table[0][5])))
-            priority = self.colorize_txt(id, f"{p.priority}".center(len(table[0][6])))
+            t = [
+                p.name,
+                f"{p.t_arrival}{unit}",
+                f"{p.t_cpu}{unit}",
+                f"{p.t_queue}{unit}",
+                f"{p.t_queue_normalized:.3f}",
+                f"{p.t_wait}{unit}",
+                f"{p.priority}",
+            ]
+            for i, field in enumerate(t):
+                t[i] = self.colorize_txt(id, field.center(len(table[0][i])))
+            table.append(t)
 
-            table.append([
-                name, t_arrival, t_cpu, t_queue, t_queue_normalized, t_wait, priority
-            ])
         table = '\n'.join([''.join(row) for row in table])
         s += f"\n{table}\n"
 
