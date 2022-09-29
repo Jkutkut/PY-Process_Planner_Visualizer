@@ -52,6 +52,7 @@ class ProcessPlanifierVisualizer:
         return graph
 
     def represent(self, verbose: bool = True, unit="ns") -> str:
+        # TODO fix the logic to be able to hide any column
         if not self.simulation.ended:
             self.simulation.run()
             if not self.simulation.ended:
