@@ -59,7 +59,7 @@ class ProcessPlanifierVisualizer:
         s = self.represent_processes()
 
         table = [
-            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "Tq", "Tq normalized", "t_wait", "priority"]]
+            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "T_start", "T_end", "Tq", "Tq normalized", "t_wait", "priority"]]
         ]
 
         for p in self.ps:
@@ -72,6 +72,8 @@ class ProcessPlanifierVisualizer:
                 p.name,
                 f"{p.t_arrival}{unit}",
                 f"{p.t_cpu}{unit}",
+                f"{p.t_start}{unit}",
+                f"{p.t_end}{unit}",
                 f"{p.t_queue}{unit}",
                 f"{p.t_queue_normalized:.3f}",
                 f"{p.t_wait}{unit}",
