@@ -4,6 +4,7 @@ from process import Process
 from processplanifiersimulator import *
 
 class ProcessPlanifierVisualizer:
+    # TODO hide vars
     # Colors
     MIN_COLOR_CODE = 16
     MAX_COLOR_CODE = 231
@@ -12,6 +13,18 @@ class ProcessPlanifierVisualizer:
 
     DX = 5
 
+    __FIELDS = ["Process", "t_arrival", "t_cpu", "t_start", "t_end", "t_queue", "t_queue normalized", "t_wait", "priority"]
+
+    PROCESS = 0
+    T_ARRIVAL = 1
+    T_CPU = 2
+    T_START = 3
+    T_END = 4
+    T_QUEUE = 5
+    T_QUEUE_NORMALIZED = 6
+    T_WAIT = 7
+    PRIORITY = 8
+
     def __init__(self, processes: list, simulator: ProcessPlanifierSimulator, *modifiers):
         self.ps = processes
         if len(self.ps) == 0:
@@ -19,6 +32,7 @@ class ProcessPlanifierVisualizer:
         if len(self.ps) > self.MAX_PROCESSES:
             raise Exception("Too many processes")
         self.simulation = simulator(self.ps, *modifiers)
+        self.columns2show = [True for _ in range(len(self.__FIELDS))]
 
     def represent_processes(self) -> str:
         t = self.simulation.t
@@ -52,7 +66,6 @@ class ProcessPlanifierVisualizer:
         return graph
 
     def represent(self, verbose: bool = True, unit="ns") -> str:
-        # TODO fix the logic to be able to hide any column
         if not self.simulation.ended:
             self.simulation.run()
             if not self.simulation.ended:
@@ -60,14 +73,15 @@ class ProcessPlanifierVisualizer:
         s = self.represent_processes()
 
         table = [
-            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "t_start", "t_end", "t_queue", "t_queue normalized", "t_wait", "priority"]]
+            [f" {i}  " for i in self.__FIELDS]
         ]
 
         for p in self.ps:
             p.protected = False
 
         if all([p.priority == Process.UDF for p in self.ps]):
-            table[0][-1] = ""
+            self.hide_column(self.PRIORITY)
+
         for id, p in enumerate(self.ps):
             t = [
                 p.name,
@@ -83,6 +97,10 @@ class ProcessPlanifierVisualizer:
             for i, field in enumerate(t):
                 t[i] = self.colorize_txt(id, field.center(len(table[0][i])))
             table.append(t)
+
+        # Hide fields
+        for r in range(len(table)):
+            table[r] = [table[r][c] for c in range(len(table[r])) if self.columns2show[c]]
 
         table = '\n'.join([''.join(row) for row in table])
         s += f"\n{table}\n"
@@ -115,6 +133,17 @@ class ProcessPlanifierVisualizer:
     def plot(self, verbose: bool = True, unit="ns"):
         print(self.represent(verbose = verbose, unit=unit))
 
+    def _set_column_visibility(self, column: int, value: bool):
+        if column < 0 or column >= len(self.__FIELDS):
+            raise Exception("Invalid column.")
+        self.columns2show[column] = value
+
+    def hide_column(self, column: int):
+        self._set_column_visibility(column, False)
+
+    def show_column(self, column: int):
+        self._set_column_visibility(column, False)
+    
     def colorize_txt(self, color_id: int, txt: str) -> str:
         if txt.strip() == str(Process.UDF):
             txt = "".center(len(txt))
