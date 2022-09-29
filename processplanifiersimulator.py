@@ -117,13 +117,24 @@ class SRTF(ProcessPlanifierSimulator):
 class SRJF(SRTF):
     pass
 
-# class RR(ProcessPlanifierSimulator):
-#     def __init__(self, processes: list):
-#         super().__init__(processes, self.BY_TIME)
+class RR(ProcessPlanifierSimulator):
+    def __init__(self, processes: list, quantum: int):
+        super().__init__(processes, self.BY_TIME)
+        self.quantum = quantum
 
-#     def run(self):
-#         # self.active_queue = []
-#         i = 0
-#         while len(self.queue) > 0:
-#             break
-#         pass # TODO 
+    def run(self):
+        active_queue = []
+        i = -1
+        while len(self.queue) > 0:
+            i += 1
+            lst = self.avalible2run(self.t)
+            if i >= len(lst):
+                i = 0
+            p = lst[i]
+            self.t = p.run_for(self.t, self.quantum)
+            if p.ended:
+                self.queue.remove(p)
+                lst.remove(p)
+                i -= 1
+            
+        self.ended = True
