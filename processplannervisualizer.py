@@ -1,11 +1,11 @@
 from AsciiGraph import *
 
 from process import Process
-from processplanifiersimulator import *
+from processplannersimulator import *
 
-class ProcessPlanifierVisualizer:
+class ProcessPlannerVisualizer:
     '''
-    Class with the logic to visualize a ProcessPlanifierSimulator.
+    Class with the logic to visualize a Processplannersimulator.
     '''
 
     # ******** COLUMNS ********
@@ -30,7 +30,7 @@ class ProcessPlanifierVisualizer:
 
     _DX = 5 # Graph horizontal size of each element
 
-    def __init__(self, processes: list, simulator: ProcessPlanifierSimulator, *modifiers):
+    def __init__(self, processes: list, simulator: ProcessPlannerSimulator, *modifiers):
         self._ps = processes
         if len(self._ps) == 0:
             raise Exception("Really? Empty array?")

@@ -1,4 +1,4 @@
-class ProcessPlanifierSimulator:
+class ProcessPlannerSimulator:
     '''
     Class with the logic to simulate a group of processes.
     '''
@@ -61,7 +61,7 @@ class ProcessPlanifierSimulator:
 
 # ******** Planifiers ********
 
-class FCFS(ProcessPlanifierSimulator):
+class FCFS(ProcessPlannerSimulator):
     def __init__(self, processes: list, plan_by):
         super().__init__(processes, plan_by)
 
@@ -75,7 +75,7 @@ class FCFS(ProcessPlanifierSimulator):
         self._end()
         return self.t
 
-class SJF(ProcessPlanifierSimulator):
+class SJF(ProcessPlannerSimulator):
     def __init__(self, processes: list):
         super().__init__(processes, self.BY_TIME)
 
@@ -86,7 +86,7 @@ class SJF(ProcessPlanifierSimulator):
         while len(self._queue) > 0:
             lst = self._available2run(self.t)
             if len(lst) == 0:
-                t += 1
+                self._t += 1
                 continue
             # Sortest Job Fist (SJF)
             lst_s = sorted(lst, key = remaining_ft)
@@ -102,7 +102,7 @@ class SJF(ProcessPlanifierSimulator):
         self._end()
         return self.t
 
-class SRTF(ProcessPlanifierSimulator):
+class SRTF(ProcessPlannerSimulator):
     def __init__(self, processes: list):
         super().__init__(processes, self.BY_ENTRY)
 
@@ -134,7 +134,7 @@ class SRTF(ProcessPlanifierSimulator):
 class SRJF(SRTF):
     pass
 
-class RR(ProcessPlanifierSimulator):
+class RR(ProcessPlannerSimulator):
     def __init__(self, processes: list, quantum: int):
         super().__init__(processes, self.BY_TIME)
         self.quantum = quantum
