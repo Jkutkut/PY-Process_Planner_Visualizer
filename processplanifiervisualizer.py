@@ -59,7 +59,7 @@ class ProcessPlanifierVisualizer:
         s = self.represent_processes()
 
         table = [
-            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "T_start", "T_end", "Tq", "Tq normalized", "t_wait", "priority"]]
+            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "t_start", "t_end", "t_queue", "t_queue normalized", "t_wait", "priority"]]
         ]
 
         for p in self.ps:
@@ -86,8 +86,8 @@ class ProcessPlanifierVisualizer:
         table = '\n'.join([''.join(row) for row in table])
         s += f"\n{table}\n"
 
-        s = f"{s}\nAvg time queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
-        s = f"{s}Avg time  wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
+        s = f"{s}\nAvg t_queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
+        s = f"{s}Avg  t_wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
 
         for p in self.ps:
             p.protected = True
@@ -99,6 +99,15 @@ class ProcessPlanifierVisualizer:
             s += f"  Avg Tq: avg(Tq) = sum(Tq(n)) / n\n\n"
             s += f"  t_wait = (last start time of process) - (t_cpu consumed previously) - t_arrival\n"
             s += f"  Avg t_wait: avg(t_wait) = sum(t_wait(n)) / n\n"
+
+            s += f"\nCheatSheet:\n"
+            s += f"  t_arrival: Time the process was created.\n"
+            s += f"  t_cpu: Amount of time units the process needs.\n"
+            s += f"  t_start: Time the process started.\n"
+            s += f"  t_end: Time the process ended.\n"
+            s += f"  t_queue: Time took from creation to finalization.\n"
+            s += f"  t_queue normalized: t_queue relative to t_cpu.\n"
+            s += f"  t_wait: Time waited.\n"
 
         return s
 
