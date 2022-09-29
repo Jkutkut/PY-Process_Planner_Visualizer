@@ -115,7 +115,11 @@ class SRJF(SRTF):
 
 # class RR(ProcessPlanifierSimulator):
 #     def __init__(self, processes: list):
-#         super().__init__(processes) # TODO Check plan_by
+#         super().__init__(processes, self.BY_TIME)
 
 #     def run(self):
-#         pass # TODO
+#         # self.active_queue = []
+#         i = 0
+#         while len(self.queue) > 0:
+#             break
+#         pass # TODO 
