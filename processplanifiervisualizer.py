@@ -52,12 +52,41 @@ class ProcessPlanifierVisualizer:
         return graph
 
     def represent(self, verbose: bool = True, unit="ns") -> str:
-        # TODO hide fields not defined
         if not self.simulation.ended:
             self.simulation.run()
             if not self.simulation.ended:
                 raise Exception("The simulation did not end")
         s = self.represent_processes()
+
+        table = [
+            [f" {i}  " for i in ["Process", "t_arrival", "t_cpu", "Tq", "Tq normalized", "t_wait", "priority"]]
+        ]
+
+        for p in self.ps:
+            p.protected = False
+
+        if all([p.priority == Process.UDF for p in self.ps]):
+            table[0][-1] = ""
+        for id, p in enumerate(self.ps):
+            name = self.colorize_txt(id, p.name.center(len(table[0][0])))
+            t_arrival = self.colorize_txt(id, f"{p.t_arrival}{unit}".center(len(table[0][1])))
+            t_cpu = self.colorize_txt(id, f"{p.t_cpu}{unit}".center(len(table[0][2])))
+            t_queue = self.colorize_txt(id, f"{p.t_queue}{unit}".center(len(table[0][3])))
+            t_queue_normalized = self.colorize_txt(id, f"{p.t_queue_normalized:.3f}".center(len(table[0][4])))
+            t_wait = self.colorize_txt(id, f"{p.t_wait}{unit}".center(len(table[0][5])))
+            priority = self.colorize_txt(id, f"{p.priority}".center(len(table[0][6])))
+
+            table.append([
+                name, t_arrival, t_cpu, t_queue, t_queue_normalized, t_wait, priority
+            ])
+        table = '\n'.join([''.join(row) for row in table])
+        s += f"\n{table}\n"
+
+        s = f"{s}\nAvg time queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
+        s = f"{s}Avg time  wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
+
+        for p in self.ps:
+            p.protected = True
 
         if verbose:
             s += f"\nFormulas:\n"
@@ -67,38 +96,14 @@ class ProcessPlanifierVisualizer:
             s += f"  t_wait = (last start time of process) - (t_cpu consumed previously) - t_arrival\n"
             s += f"  Avg t_wait: avg(t_wait) = sum(t_wait(n)) / n\n"
 
-        table = [
-            [f" {i}  " for i in ["Process", "priority", "t_arrival", "t_cpu", "Tq", "Tq normalized", "t_wait"]]
-        ]
-        for p in self.ps:
-            p.protected = False
-
-        for id, p in enumerate(self.ps):
-            name = self.colorize_txt(id, p.name.center(len(table[0][0])))
-            priority = self.colorize_txt(id, f"{p.priority}".center(len(table[0][1])))
-            t_arrival = self.colorize_txt(id, f"{p.t_arrival}{unit}".center(len(table[0][2])))
-            t_cpu = self.colorize_txt(id, f"{p.t_cpu}{unit}".center(len(table[0][3])))
-            t_queue = self.colorize_txt(id, f"{p.t_queue}{unit}".center(len(table[0][4])))
-            t_queue_normalized = self.colorize_txt(id, f"{p.t_queue_normalized:.3f}".center(len(table[0][5])))
-            t_wait = self.colorize_txt(id, f"{p.t_wait}{unit}".center(len(table[0][6])))
-            table.append([
-                name, priority, t_arrival, t_cpu, t_queue, t_queue_normalized, t_wait
-            ])
-        table = '\n'.join([''.join(row) for row in table])
-        s += f"\n{table}\n"
-
-        s = f"{s}\nAvg Time queue: {Process.avg_t_queue(self.ps):.3f}{unit}\n"
-        s = f"{s}Avg Time wait: {Process.avg_t_wait(self.ps):.3f}{unit}\n"
-
-        for p in self.ps:
-            p.protected = True
-
         return s
 
     def plot(self, verbose: bool = True, unit="ns"):
         print(self.represent(verbose = verbose, unit=unit))
 
     def colorize_txt(self, color_id: int, txt: str) -> str:
+        if txt.strip() == str(Process.UDF):
+            txt = "".center(len(txt))
         return f"{self.get_color(color_id)}{txt}{self.NC}"
 
     def get_color(self, index: int):
