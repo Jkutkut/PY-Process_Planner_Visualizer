@@ -146,6 +146,9 @@ class RR(ProcessPlannerSimulator):
         while len(self._queue) > 0:
             i += 1
             lst = self._available2run(self.t)
+            if len(lst) == 0:
+                self._t += 1
+                continue
             if i >= len(lst):
                 i = 0
             p = lst[i]
