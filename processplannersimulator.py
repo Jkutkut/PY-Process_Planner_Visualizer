@@ -44,7 +44,7 @@ class ProcessPlannerSimulator:
 
     def _available2run(self, t: int) -> list:
         lst = []
-        for p in self._processes:
+        for p in self._queue:
             if p.ended:
                 continue
             if p.t_arrival > t:
